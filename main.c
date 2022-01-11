@@ -406,10 +406,6 @@ main() {
 
     return(0);
 }
-
-
-
-
 /*    FILE *f_MM;
     f_MM=fopen("MeioDeMobilidade.txt","a+");
 
