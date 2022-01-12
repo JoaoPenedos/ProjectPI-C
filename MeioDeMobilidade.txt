@@ -1,4 +1,0 @@
-Codigo       Tipo        Custo       Autonomia
-m_1       carro          5          400
-m_2       trotinete      0.15         15
-a anm m asnm

@@ -19,14 +19,14 @@ typedef struct {
     int distancia;
 }pUtilizacao;
 //-------------------------------------------------------
-struct m
+struct m 
 {
 	mMobilidade itemMM;
 	struct m *prox;
 };
 typedef struct m tcelulaM;
 //-------------------------------------------------------
-struct p
+struct p 
 {
 	pUtilizacao itemPU;
 	struct p *prox;
@@ -34,7 +34,7 @@ struct p
 typedef struct p tcelulaP;
 //#####################################################################################################
 //#####################################################################################################
-int yes_no() {
+/*int yes_no() {
     char option;
 
     while (1) {
@@ -52,18 +52,16 @@ int yes_no() {
             printf("Only (y)es or (n)o are acceptable.\n");
         }
     }
-}
+}*/
 //#####################################################################################################
-void iniM(mMobilidade *meio)
-{
+void iniM(mMobilidade *meio) {
 	strcpy((*meio).codigo,"--");
 	strcpy((*meio).tipoMM,"--");
 	(*meio).custo=0;
 	(*meio).autonomia=0;
 }
 //#####################################################################################################
-void iniP(pUtilizacao *pedido)
-{
+void iniP(pUtilizacao *pedido) {
 	(*pedido).ordem=0;
 	(*pedido).nif=0;
 	strcpy((*pedido).codTipoMM,"--");
@@ -71,10 +69,10 @@ void iniP(pUtilizacao *pedido)
 	(*pedido).distancia=0;
 }
 //#####################################################################################################
-void lerM(mMobilidade *m){
-    printf("Diga o codigo do meio de mobilidade que pertende adicionar: ");
-    fflush(stdin);				
-    gets((*m).codigo);
+void lerM(mMobilidade *m,int quantM) {
+	snprintf((*m).codigo,20,"M_%d",quantM);
+    /*fflush(stdin);				
+    gets((*m).codigo);*/
     printf("Diga o tipo do meio de mobilidade que pertende adicionar: ");
     fflush(stdin);				
     gets((*m).tipoMM);
@@ -84,9 +82,8 @@ void lerM(mMobilidade *m){
     scanf("%d",&(*m).autonomia);
 }
 //#####################################################################################################
-void lerP(pUtilizacao *p){
-    printf("Diga o n de ordem: ");
-    scanf("%d",&(*p).ordem);
+void lerP(pUtilizacao *p, int quantP) {
+    (*p).ordem = quantP;
     printf("Diga o nif: ");
     scanf("%d",&(*p).nif);
     printf("Diga o codigo do tipo de meio de mobilidade: ");
@@ -98,72 +95,72 @@ void lerP(pUtilizacao *p){
     scanf("%d",&(*p).distancia);
 }
 //#####################################################################################################
-void imprimirM(mMobilidade m)
-{
+void imprimirM(mMobilidade m) {
 	printf("\n\nCodigo-(%s)\nTipoMM-(%s)\nCusto-(%.2f)\nAutonomia-(%d)\n",m.codigo,m.tipoMM,m.custo,m.autonomia);
 }
 //#####################################################################################################
-void imprimirP(pUtilizacao p)
-{
+void imprimirP(pUtilizacao p) {
 	printf("\n\nN de Ordem-(%d)\nNif-(%d)\nCod TipoMM-(%s)\nTempo-(%d)\nDistancia-(%d)\n",p.ordem,p.nif,p.codTipoMM,p.tempo,p.distancia);
 }
 //#####################################################################################################
-tcelulaM *inicializarM(){
+void putInFileM(mMobilidade m, FILE *f_MM) {
+	fprintf(f_MM,"%-12s%-15s%-15.2f%d\n",m.codigo,m.tipoMM,m.custo,m.autonomia);
+}
+//#####################################################################################################
+void putInFileP(pUtilizacao p, FILE *f_PU) {
+	fprintf(f_PU,"%-20d%-12d%-20s%-10d%d\n",p.ordem,p.nif,p.codTipoMM,p.tempo,p.distancia);
+}
+//#####################################################################################################
+tcelulaM *inicializarM() {
 	tcelulaM * ap;
 	ap = (tcelulaM *) malloc( sizeof(tcelulaM));
 	
-	if(ap==NULL)
-	{
+	if(ap==NULL) {
 		system("cls");
 		printf("E impossivel criar a lista");
 		getch();
 		return(NULL);
 	}
-	else
-	{
+	else {
 		iniM(&(*ap).itemMM);
 		(*ap).prox=NULL;
 		return(ap);
 	}
 }
 //#####################################################################################################
-tcelulaP *inicializarP(){
+tcelulaP *inicializarP() {
 	tcelulaP * ap;
 	ap = (tcelulaP *) malloc( sizeof(tcelulaP));
 	
-	if(ap==NULL)
-	{
+	if(ap==NULL) {
 		system("cls");
 		printf("E impossivel criar a lista");
 		getch();
 		return(NULL);
 	}
-	else
-	{
+	else {
 		iniP(&(*ap).itemPU);
 		(*ap).prox=NULL;
 		return(ap);
 	}
 }
 //#####################################################################################################
-void inserirMeioMobilidade(tcelulaM *m, int *sizeM){
+void inserirMeioMobilidade(tcelulaM *m, int *sizeM, int quantM) {
     tcelulaM * ap;
 	mMobilidade aux;
 	ap=(tcelulaM *)malloc(sizeof(tcelulaM));
 	
 	system("cls");
-	if(ap==NULL)
-	{ 
+	if(ap==NULL) { 
 		printf("Nao existe mais espaço em memoria. E impossivel inserir");
 		getch();
 	}
-	else
-	{
+	else {
         inicializarM(&(*ap).itemMM);
         (*ap).prox=NULL;
 		
 		system("cls");
-		lerM(&aux);
+		lerM(&aux,quantM);
         (*sizeM)++;
 		while((*m).prox!=NULL){
 			m=(*m).prox;
@@ -173,24 +170,22 @@ void inserirMeioMobilidade(tcelulaM *m, int *sizeM){
 	}
 }
 //#####################################################################################################
-void inserirPedidoUtilizacao(tcelulaP *p, int *sizeP){
+void inserirPedidoUtilizacao(tcelulaP *p, int *sizeP, int quantP) {
     tcelulaP * ap;
 	pUtilizacao aux;
 	ap=(tcelulaP *)malloc(sizeof(tcelulaP));
 	
 	system("cls");
-	if(ap==NULL)
-	{ 
+	if(ap==NULL) { 
 		printf("Nao existe mais espaço em memoria. E impossivel inserir");
 		getch();
 	}
-	else
-	{
+	else {
         inicializarP(&(*ap).itemPU);
         (*ap).prox=NULL;
 		
 		system("cls");
-		lerP(&aux);
+		lerP(&aux,quantP);
         (*sizeP)++;
 		while((*p).prox!=NULL){
 			p=(*p).prox;
@@ -200,19 +195,17 @@ void inserirPedidoUtilizacao(tcelulaP *p, int *sizeP){
 	}
 }
 //#####################################################################################################
-void listarMeioMobilidade(tcelulaM * m, int sizeM)
-{
+void listarMeioMobilidade(tcelulaM *m, int sizeM) {
+	int flag = 1;
+
 	system("cls");
 	puts("Dados disponiveis: ");
-	if((*m).prox==NULL)
-	{
+	if((*m).prox==NULL)	{
 		puts("Nenhum");
 	}
-	else
-	{
+	else {
         printf("A lista de pedidos de utilizacao contem %d pedidos",sizeM);
-		while((*m).prox != NULL)
-		{
+		while((*m).prox != NULL) {
 			imprimirM((*m).itemMM);
 			m=(*m).prox;
 		}
@@ -220,19 +213,15 @@ void listarMeioMobilidade(tcelulaM * m, int sizeM)
 	getch();
 }
 //#####################################################################################################
-void listarPedidoUtilizacao(tcelulaP * p, int sizeP)
-{
+void listarPedidoUtilizacao(tcelulaP *p, int sizeP) {
 	system("cls");
 	puts("Dados disponiveis: ");
-	if((*p).prox==NULL)
-	{
+	if((*p).prox==NULL) {
 		puts("Nenhum");
 	}
-	else
-	{
+	else {
         printf("A lista de pedidos de utilizacao contem %d pedidos",sizeP);
-		while((*p).prox != NULL)
-		{
+		while((*p).prox != NULL) {
 			imprimirP((*p).itemPU);
 			p=(*p).prox;
 		}
@@ -240,27 +229,23 @@ void listarPedidoUtilizacao(tcelulaP * p, int sizeP)
 	getch();
 }
 //#####################################################################################################
-void removerMeioMobilidade(tcelulaM **m, int *sizeM)
-{
+void removerMeioMobilidade(tcelulaM **m, int *sizeM) {
 	tcelulaM *y, *atras, *frente, *aux;
 	char elemRetirar[30];
 	
 	system ("cls");
 	y=(*m);
 	
-	if(((*y).prox)==NULL)
-	{ 
+	if(((*y).prox)==NULL) { 
 		printf("A lista nao tem dados"); 
 	}
-	else
-	{
+	else {
 		printf("Diga o codigo cujo meio de mobilidade quer retirar?\n");
 		fflush(stdin);
 		gets(elemRetirar);
 		strupr(elemRetirar);
 		
-		if(strcmp(elemRetirar,(*(*m)).itemMM.codigo)==0)
-		{
+		if(strcmp(elemRetirar,(*(*m)).itemMM.codigo)==0) {
 			system ("cls");
 			printf("O elemento foi retirado\n");
 			imprimirM((*(*m)).itemMM);
@@ -268,26 +253,22 @@ void removerMeioMobilidade(tcelulaM **m, int *sizeM)
             (*sizeM)--;
 			free(y);
 		}
-		else
-		{
+		else {
 			aux=(*m);
-			while ((strcmp(elemRetirar,(*aux).itemMM.codigo)!=0) && ((*(*aux).prox).prox!=NULL))
-			{
+			while((strcmp(elemRetirar,(*aux).itemMM.codigo)!=0) && ((*(*aux).prox).prox!=NULL)) {
 				atras=aux;
 				aux=(*aux).prox;
 				frente=(*aux).prox;
 			}
 			
-			if (strcmp(elemRetirar,(*aux).itemMM.codigo)==0)
-			{
+			if(strcmp(elemRetirar,(*aux).itemMM.codigo)==0) {
 				(*atras).prox=frente;
 				printf("O elemento foi retirado\n");
 				imprimirM((*aux).itemMM);
                 (*sizeM)--;
 				free(aux);
 			}
-			else
-			{
+			else {
 				system("cls"); 
 				printf("O elemento com o codigo %s nao existe na lista", elemRetirar);
 			}
@@ -296,54 +277,46 @@ void removerMeioMobilidade(tcelulaM **m, int *sizeM)
 	getch();
 }
 //#####################################################################################################
-void removerPedidoUtilizacao(tcelulaP **p, int *sizeP)
-{
+void removerPedidoUtilizacao(tcelulaP **p, int *sizeP) {
 	tcelulaP *y, *atras, *frente, *aux;
 	char elemRetirar[30];
 	
 	system ("cls");
 	y=(*p);
 	
-	if(((*y).prox)==NULL)
-	{ 
+	if(((*y).prox)==NULL) { 
 		printf("A lista nao tem dados"); 
 	}
-	else
-	{
+	else {
 		printf("Diga o codigo cujo meio de mobilidade quer retirar?\n");
 		fflush(stdin);
 		gets(elemRetirar);
 		strupr(elemRetirar);
 		
-		if(strcmp(elemRetirar,(*(*p)).itemPU.ordem)==0)
-		{
-			system ("cls");
+		if(strcmp(elemRetirar,(*(*p)).itemPU.ordem)==0) {
+			system("cls");
 			printf("O elemento foi retirado\n");
 			imprimirP((*(*p)).itemPU);
 			(*p)=(*(*p)).prox;
             (*sizeP)--;
 			free(y);
 		}
-		else
-		{
+		else {
 			aux=(*p);
-			while ((strcmp(elemRetirar,(*aux).itemPU.ordem)!=0) && ((*(*aux).prox).prox!=NULL))
-			{
+			while((strcmp(elemRetirar,(*aux).itemPU.ordem)!=0) && ((*(*aux).prox).prox!=NULL)) {
 				atras=aux;
 				aux=(*aux).prox;
 				frente=(*aux).prox;
 			}
 			
-			if (strcmp(elemRetirar,(*aux).itemPU.ordem)==0)
-			{
+			if(strcmp(elemRetirar,(*aux).itemPU.ordem)==0) {
 				(*atras).prox=frente;
 				printf("O elemento foi retirado\n");
 				imprimirP((*aux).itemPU);
                 (*sizeP)--;
 				free(aux);
 			}
-			else
-			{
+			else {
 				system("cls"); 
 				printf("O elemento com o codigo %s nao existe na lista", elemRetirar);
 			}
@@ -353,17 +326,58 @@ void removerPedidoUtilizacao(tcelulaP **p, int *sizeP)
 }
 //#####################################################################################################
 //#####################################################################################################
+armazenarNosFicheiros(tcelulaM *m, tcelulaP *p, int listaP, int listSizeP) {
+	FILE *f_MM;
+	FILE *f_PU;
+
+	f_MM=fopen("MeioDeMobilidade.txt","w");//a se for para ler o conteudo e carregar numa string
+	f_PU=fopen("PedidosDeUtilizacao.txt","w");//a se for para ler o conteudo e carregar numa string
+
+	fprintf(f_MM,"%-12s%-15s%-15s%s\n","Codigo","Tipo","Custo","Autonomia");
+	fprintf(f_PU,"%-20s%-12s%-20s%-10s%s\n","Numero de Ordem","NIF","Codigo Tipo MM","Tempo","Distancia");
+	/*fseek(f_MM, 0, SEEK_END);
+	size = ftell(f_MM);
+	if (0 == size)*/
+
+    if(NULL != f_MM) {
+		if((*m).prox==NULL) {
+			puts("Nenhum dado para colocar na lista de \"Meios de Mobilidade\"");
+		}
+		else {
+			while((*m).prox != NULL) {
+				putInFileM((*m).itemMM,f_MM);
+				m=(*m).prox;
+			}
+		}
+	}
+/*
+    if(NULL != f_PU) {
+		if((*p).prox==NULL) {
+			puts("Nenhum dado para colocar na lista de \"Pedidos de Utilizacao\"");
+		}
+		else {
+			while((*p).prox != NULL) {
+				putInFileP((*p).itemPU,f_PU);
+				p=(*p).prox;
+			}
+		}
+	}*/
+
+    fclose(f_MM);
+    fclose(f_PU);
+}
+//#####################################################################################################
+//#####################################################################################################
 main() {
-    int opcao, listSizeM = 0, listSizeP = 0;
+    int opcao, listSizeM = 0, listSizeP = 0, quantM = 1, quantP = 1;
 	tcelulaM *listaM;
 	tcelulaP *listaP;
-    //int size,ctn,ctgMM=0,ctgPU=0;
+    //int ,ctn,ctgMM=0,ctgPU=0;
 
     listaM=inicializarM();
     listaP=inicializarP();
-    do{
-        do
-        {
+    do {
+        do {
             system("cls");
             printf("-------------------------------------------------------------------------------------------------------------- \n"
                    "|                                               MENU                                                         | \n"
@@ -375,20 +389,20 @@ main() {
                    "|                                                                                                            | \n"
                    "|   7 - Calculo do custo de utilizacao                                                                       | \n"
                    "|   8 - Distribuir meios de mobilidade                 9 - Listagem de utilizacao de um meio de mobilidade   | \n"
-                   "|   10 - Armazenar pedidos de utilizacao               11 - Armazenar meios de mobilidade                    | \n"
                    "-------------------------------------------------------------------------------------------------------------- \n"
                    "Opcao: ");
             scanf("%d",&opcao);
-        } while ((opcao>11)||(opcao<0));
+        }while ((opcao>11)||(opcao<0));
 
 
-        switch (opcao)
-        {
+        switch (opcao) {
             case 0: printf("Xau"); break;
-            case 1: inserirMeioMobilidade(listaM,&listSizeM); break;
+            case 1: inserirMeioMobilidade(listaM,&listSizeM,quantM); 
+					quantM++; break;
             case 2: listarMeioMobilidade(listaM,listSizeM); break;
             case 3: removerMeioMobilidade(&listaM,&listSizeM); break;
-            case 4: inserirPedidoUtilizacao(listaP,&listSizeP); break;
+            case 4: inserirPedidoUtilizacao(listaP,&listSizeP,quantP); 
+					quantP++; break;
             case 5: listarPedidoUtilizacao(listaP,listSizeP); break;
             case 6: removerPedidoUtilizacao(&listaP,&listSizeP); break;
             /*case 7: calcularCustoMobilidade();
@@ -396,28 +410,12 @@ main() {
             case 8: distribuirMeiosMobilidade();
             break;
             case 9: listagemUtilizacaoMeioMobilidade();
-            break;
-            case 10: armazenarPedidosUtilizacao();
-            break;
-            case 11: armazenarMeiosMobilidade();
             break;*/
         }
-    } while (opcao != 0);
+    }while (opcao != 0);
 
+	armazenarNosFicheiros(listaM,listSizeM,listaP,listSizeP);
+    free(listaM);
+    free(listaP);
     return(0);
 }
-/*    FILE *f_MM;
-    f_MM=fopen("MeioDeMobilidade.txt","a+");
-
-    if (NULL != f_MM) {
-        fseek (f_MM, 0, SEEK_END);
-        size = ftell(f_MM);
-
-        if (0 == size) {
-            fprintf(f_MM, "Codigo       Tipo        Custo       Autonomia\n");
-        }
-		
-        fprintf(f_MM, "%s       %s      %s      %s\n", mm[0], mm[1], mm[2], mm[3]);
-    }
-
-    fclose(f_MM);*/
