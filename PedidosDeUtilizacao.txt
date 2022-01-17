@@ -1,3 +1,7 @@
 Numero de                    Codigo
 Ordem         NIF            Tipo MM      Tempo      Distancia
-1             123123123      M_1          1          2
+1             123123123      M_2          12         2
+2             123123123      M_6          15         2
+4             123123123      M_4          10         2
+6             123123123      M_2          30         2
+7             123321456      M_2          50         3
